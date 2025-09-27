@@ -2,34 +2,134 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Calculator</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .container {
+            background: white;
+            padding: 30px 40px;
+            text-align: center;
+            width: 300px;
+        }
+
+        label, select, input, button {
+            display: block;
+            margin: 10px auto;
+        }
+
+        input, select {
+            width: 200px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<h1>Calculator</h1>
-<form action="/calculate" method="post">
-    <label>Operation:</label>
-    <select name="operation" id="operation" onchange="toggleExponent()">
-        <option value="sqrt">Square root (sqrt)</option>
-        <option value="fact">Factorial (fact)</option>
-        <option value="ln">Natural log (ln)</option>
-        <option value="pow">Power (pow)</option>
-    </select>
-    <br/><br/>
-    <label>x:</label>
-    <input type="number" step="any" name="x" required/>
-    <br/><br/>
-    <div id="expDiv" style="display:none;">
-        <label>b (exponent):</label>
-        <input type="number" name="b"/>
-    </div>
-    <br/>
-    <button type="submit">Calculate</button>
-</form>
+<div class="container">
+    <h1>Calculator</h1>
+    <form id="calcForm">
+        <label>Operation:</label>
+        <select name="operation" id="operation" onchange="toggleExponent()">
+            <option value="sqrt">Square root (sqrt)</option>
+            <option value="fact">Factorial (fact)</option>
+            <option value="ln">Natural log (ln)</option>
+            <option value="pow">Power (pow)</option>
+        </select>
+
+        <label>x:</label>
+        <input type="number" step="any" name="x" id="x" required/>
+
+        <div id="expDiv" style="display:none;">
+            <label>b (exponent):</label>
+            <input type="number" step="any" name="b" id="b"/>
+        </div>
+
+        <div class="error" id="formError"></div>
+
+        <button type="submit">Calculate</button>
+
+        <div class="result" id="resultDiv"></div>
+    </form>
+</div>
 
 <script>
 function toggleExponent() {
     const op = document.getElementById("operation").value;
     document.getElementById("expDiv").style.display = op === "pow" ? "block" : "none";
+    document.getElementById("formError").textContent = '';
 }
+
+// Handle form submission via AJAX
+document.getElementById("calcForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent page reload
+
+    const op = document.getElementById("operation").value;
+    const base = parseFloat(document.getElementById("x").value);
+    const expField = document.getElementById("b");
+    const exp = expField ? parseFloat(expField.value) : null;
+    const errorDiv = document.getElementById("formError");
+    const resultDiv = document.getElementById("resultDiv");
+
+    errorDiv.textContent = '';
+    resultDiv.textContent = '';
+
+    // Client-side validation
+    if (op === "pow") {
+        if (isNaN(exp)) {
+            errorDiv.textContent = "Exponent b is required for pow.";
+            return;
+        }
+        if (base < 0 && exp !== Math.floor(exp)) {
+            errorDiv.textContent = "Negative base not allowed for fractional exponents.";
+            return;
+        }
+    }
+
+    // Prepare data to send
+    const data = new URLSearchParams();
+    data.append("operation", op);
+    data.append("x", base);
+    if (exp !== null) data.append("b", exp);
+
+    // Send POST request
+    fetch("/calculate", {
+        method: "POST",
+        body: data,
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json.error) {
+            errorDiv.textContent = json.error;
+        } else {
+            resultDiv.textContent = "Result: " + json.result;
+        }
+    })
+    .catch(err => {
+        errorDiv.textContent = "Server error: " + err;
+    });
+});
 </script>
 </body>
 </html>

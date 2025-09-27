@@ -1,22 +1,19 @@
 package com.calculator;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 public class CalculatorTest {
 
     @Test
     void testSqrtValid() {
-        assertEquals(3.0, Calculator.sqrt(9.0), 1e-12);
+        assertEquals(4.0, Calculator.sqrt(16.0), 1e-12);
         assertEquals(0.0, Calculator.sqrt(0.0), 1e-12);
     }
 
     @Test
     void testSqrtInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> Calculator.sqrt(-1.0));
+        assertThrows(IllegalArgumentException.class, () -> Calculator.sqrt(-9.0));
     }
 
     @Test
@@ -39,6 +36,8 @@ public class CalculatorTest {
     @Test
     void testFactorialInvalid() {
         assertThrows(IllegalArgumentException.class, () -> Calculator.fact(-5));
+        assertThrows(IllegalArgumentException.class, () -> Calculator.fact(2.1));
+        assertThrows(IllegalArgumentException.class, () -> Calculator.fact(-2.1));
     }
 
     @Test
@@ -50,18 +49,30 @@ public class CalculatorTest {
     @Test
     void testLnInvalid() {
         assertThrows(IllegalArgumentException.class, () -> Calculator.ln(0.0));
-        assertThrows(IllegalArgumentException.class, () -> Calculator.ln(-1.0));
+        assertThrows(IllegalArgumentException.class, () -> Calculator.ln(-2.0));
     }
 
     @Test
-    void testPowerValid() {
+    void testPowValid() {
         assertEquals(1.0, Calculator.pow(5.0, 0), 1e-12);
-        assertEquals(25.0, Calculator.pow(5.0, 2), 1e-12);
-        assertEquals(0.0, Calculator.pow(0.0, 5), 1e-12);
+        assertEquals(8.0, Calculator.pow(2.0, 3), 1e-12);
+        assertEquals(0.25, Calculator.pow(2.0, -2), 1e-12);
+        assertEquals(Math.pow(-2, 2), Calculator.pow(-2.0, 2), 1e-12); // negative base integer exponent
     }
 
     @Test
-    void testPowerInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> Calculator.pow(-2.0, 3));
+    void testPowFractionalExponentNegativeBase() {
+        assertThrows(IllegalArgumentException.class, () -> Calculator.pow(-2.0, 0.5));
+        assertThrows(IllegalArgumentException.class, () -> Calculator.pow(-5.0, 1.5));
+    }
+
+    @Test
+    void testPowNegativeBaseIntegerExponent() {
+        assertEquals(-8.0, Calculator.pow(-2.0, 3), 1e-12);
+    }
+
+    @Test
+    void testPowZeroBaseNegativeExponent() {
+        assertEquals(Double.POSITIVE_INFINITY, Calculator.pow(0.0, -1), 1e-12);
     }
 }

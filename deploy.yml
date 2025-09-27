@@ -24,4 +24,8 @@
         detach: yes
         recreate: true
         published_ports:
-          - "8081:8081"   # Map container port 8081 to host
+          - "8081:8081"
+
+    - name: Print access URL
+      debug:
+        msg: "Calculator is running! Open in your browser: http://localhost:8081"

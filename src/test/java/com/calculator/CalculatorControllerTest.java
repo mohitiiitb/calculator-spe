@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -16,91 +15,123 @@ public class CalculatorControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void testIndexPage() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"));
-    }
-
-    @Test
-    void testCalculateSqrtValid() throws Exception {
+    void testSqrtValid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "sqrt")
                         .param("x", "25"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attribute("result", 5.0));
+                .andExpect(jsonPath("$.result").value(5.0));
     }
 
     @Test
-    void testCalculateSqrtInvalid() throws Exception {
+    void testSqrtInvalid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "sqrt")
                         .param("x", "-4"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    void testCalculateFactValid() throws Exception {
+    void testFactValid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "fact")
                         .param("x", "5"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attribute("result", 120.0));
+                .andExpect(jsonPath("$.result").value(120.0));
     }
 
     @Test
-    void testCalculateFactInvalid() throws Exception {
+    void testFactInvalid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "fact")
                         .param("x", "-2"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    void testCalculateLnValid() throws Exception {
+    void testFactInvalidFraction() throws Exception {
+        mockMvc.perform(post("/calculate")
+                        .param("operation", "fact")
+                        .param("x", "-2.1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    void testLnValid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "ln")
                         .param("x", "10"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attribute("result", Math.log(10.0)));
+                .andExpect(jsonPath("$.result").value(Math.log(10.0)));
     }
 
     @Test
-    void testCalculateLnInvalid() throws Exception {
+    void testLnInvalid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "ln")
                         .param("x", "0"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    void testCalculatePowValid() throws Exception {
+    void testPowValid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "pow")
                         .param("x", "2")
                         .param("b", "3"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attribute("result", 8.0));
+                .andExpect(jsonPath("$.result").value(8.0));
     }
 
     @Test
-    void testCalculatePowInvalid() throws Exception {
+    void testPowNegativeExponent() throws Exception {
+        mockMvc.perform(post("/calculate")
+                        .param("operation", "pow")
+                        .param("x", "2")
+                        .param("b", "-2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(0.25));
+    }
+
+    @Test
+    void testPowFractionalBaseNegativeExponentValid() throws Exception {
+        mockMvc.perform(post("/calculate")
+                        .param("operation", "pow")
+                        .param("x", "2.5")
+                        .param("b", "-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(0.4));
+    }
+
+    @Test
+    void testPowFractionalBaseNegativeExponentInvalid() throws Exception {
         mockMvc.perform(post("/calculate")
                         .param("operation", "pow")
                         .param("x", "-2")
-                        .param("b", "3"))
+                        .param("b", "0.5"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    void testPowMissingExponent() throws Exception {
+        mockMvc.perform(post("/calculate")
+                        .param("operation", "pow")
+                        .param("x", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    void testUnknownOperation() throws Exception {
+        mockMvc.perform(post("/calculate")
+                        .param("operation", "unknown")
+                        .param("x", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").exists());
     }
 }

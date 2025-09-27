@@ -1,13 +1,15 @@
 package com.calculator;
 
 public class Calculator {
+
     public static double sqrt(double x) {
         if (x < 0) throw new IllegalArgumentException("Square root of negative number is undefined.");
         return Math.sqrt(x);
     }
 
-    public static long fact(long n) {
+    public static long fact(double n) {
         if (n < 0) throw new IllegalArgumentException("Factorial of negative number is undefined.");
+        if (n != Math.floor(n)) throw new IllegalArgumentException("Factorial of fractional numbers is undefined.");
         long result = 1;
         for (long i = 2; i <= n; i++) {
             long next = result * i;
@@ -22,8 +24,10 @@ public class Calculator {
         return Math.log(x);
     }
 
-    public static double pow(double x, long b) {
-        if (x < 0) throw new IllegalArgumentException("Negative base not allowed.");
-        return Math.pow(x, b);
+    public static double pow(double base, double exponent) {
+        if (base < 0 && exponent != Math.floor(exponent)) {
+            throw new IllegalArgumentException("Negative base not allowed for fractional exponents.");
+        }
+        return Math.pow(base, exponent);
     }
 }

@@ -1,23 +1,19 @@
 package com.calculator;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
-@Controller
+@RestController
 public class CalculatorController {
 
-    @GetMapping("/")
-    public String index() {
-        return "index"; // shows the form
-    }
-
     @PostMapping("/calculate")
-    public String calculate(
+    public Map<String, Object> calculate(
             @RequestParam("operation") String operation,
             @RequestParam("x") double x,
-            @RequestParam(value = "b", required = false) Long b,
-            Model model) {
+            @RequestParam(value = "b", required = false) Double b) {
+
+        Map<String, Object> resultMap = new HashMap<>();
 
         try {
             double result;
@@ -27,7 +23,7 @@ public class CalculatorController {
                     result = Calculator.sqrt(x);
                     break;
                 case "fact":
-                    result = Calculator.fact((long) x);
+                    result = Calculator.fact(x);
                     break;
                 case "ln":
                     result = Calculator.ln(x);
@@ -40,15 +36,12 @@ public class CalculatorController {
                     throw new IllegalArgumentException("Unknown operation.");
             }
 
-            model.addAttribute("operation", operation);
-            model.addAttribute("x", x);
-            model.addAttribute("b", b);
-            model.addAttribute("result", result);
+            resultMap.put("result", result);
 
         } catch (IllegalArgumentException | ArithmeticException e) {
-            model.addAttribute("error", e.getMessage());
+            resultMap.put("error", e.getMessage());
         }
 
-        return "result"; // shows result or error
+        return resultMap;
     }
 }

@@ -10,22 +10,15 @@ pipeline {
     stages {
         stage('Build and Test JAR') {
             steps {
-                sh 'mvn clean test package -DskipTests=false'
+                sh 'mvn -B clean verify package'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${env.DOCKER_IMAGE} ."
-                }
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                    script {
+                    withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
+                        sh "docker build -t ${env.DOCKER_IMAGE} ."
                         sh "docker push ${env.DOCKER_IMAGE}"
                     }
                 }
