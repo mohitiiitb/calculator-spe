@@ -1,0 +1,24 @@
+- hosts: calculator_hosts
+  become: true
+  tasks:
+    - name: Pull latest Docker image
+      community.docker.docker_image:
+        name: mohitiiitb/calculator-spe:latest
+        source: pull
+
+    - name: Remove old container if exists
+      community.docker.docker_container:
+        name: calculator_app
+        state: absent
+        force_kill: true
+      ignore_errors: true
+
+    - name: Run Calculator container interactively
+      community.docker.docker_container:
+        name: calculator_app
+        image: mohitiiitb/calculator-spe:latest
+        state: started
+        tty: yes
+        interactive: yes
+        attach: yes
+        recreate: true
