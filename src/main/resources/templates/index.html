@@ -81,9 +81,8 @@ function toggleExponent() {
     document.getElementById("formError").textContent = '';
 }
 
-// Handle form submission via AJAX
 document.getElementById("calcForm").addEventListener("submit", function(e) {
-    e.preventDefault(); // Prevent page reload
+    e.preventDefault();
 
     const op = document.getElementById("operation").value;
     const base = parseFloat(document.getElementById("x").value);
@@ -95,7 +94,6 @@ document.getElementById("calcForm").addEventListener("submit", function(e) {
     errorDiv.textContent = '';
     resultDiv.textContent = '';
 
-    // Client-side validation
     if (op === "pow") {
         if (isNaN(exp)) {
             errorDiv.textContent = "Exponent b is required for pow.";
@@ -107,13 +105,11 @@ document.getElementById("calcForm").addEventListener("submit", function(e) {
         }
     }
 
-    // Prepare data to send
     const data = new URLSearchParams();
     data.append("operation", op);
     data.append("x", base);
     if (exp !== null) data.append("b", exp);
 
-    // Send POST request
     fetch("/calculate", {
         method: "POST",
         body: data,
