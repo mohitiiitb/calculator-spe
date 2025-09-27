@@ -8,12 +8,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/mohitiiitb/calculator-spe.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
