@@ -1,6 +1,8 @@
+---
 - hosts: calculator_hosts
   become: true
   tasks:
+
     - name: Pull latest Docker image
       community.docker.docker_image:
         name: mohitiiitb/calculator-spe:latest
@@ -13,12 +15,11 @@
         force_kill: true
       ignore_errors: true
 
-    - name: Run Calculator container interactively
+    - name: Run Calculator container in detached mode
       community.docker.docker_container:
         name: calculator_app
         image: mohitiiitb/calculator-spe:latest
         state: started
-        tty: yes
-        interactive: yes
-        attach: yes
+        tty: yes          # Allocate a pseudo-TTY
+        detach: yes       # Run in background
         recreate: true
