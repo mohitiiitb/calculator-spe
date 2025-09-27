@@ -20,6 +20,8 @@
         name: calculator_app
         image: mohitiiitb/calculator-spe:latest
         state: started
-        tty: yes          # Allocate a pseudo-TTY
-        detach: yes       # Run in background
+        tty: yes
+        detach: yes
         recreate: true
+        published_ports:
+          - "8081:8081"   # Map container port 8081 to host

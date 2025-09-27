@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Calculator Result</title>
+</head>
+<body>
+<h1>Result</h1>
+
+<div th:if="${error}">
+    <p style="color:red;" th:text="${error}"></p>
+</div>
+
+<div th:unless="${error}">
+    <p th:text="'Operation: ' + ${operation}"></p>
+    <p th:text="'x = ' + ${x}"></p>
+    <p th:if="${b != null}" th:text="'b = ' + ${b}"></p>
+    <p th:text="'Result = ' + ${result}"></p>
+</div>
+
+<a href="/">Back</a>
+</body>
+</html>

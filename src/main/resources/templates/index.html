@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Calculator</title>
+</head>
+<body>
+<h1>Calculator</h1>
+<form action="/calculate" method="post">
+    <label>Operation:</label>
+    <select name="operation" id="operation" onchange="toggleExponent()">
+        <option value="sqrt">Square root (sqrt)</option>
+        <option value="fact">Factorial (fact)</option>
+        <option value="ln">Natural log (ln)</option>
+        <option value="pow">Power (pow)</option>
+    </select>
+    <br/><br/>
+    <label>x:</label>
+    <input type="number" step="any" name="x" required/>
+    <br/><br/>
+    <div id="expDiv" style="display:none;">
+        <label>b (exponent):</label>
+        <input type="number" name="b"/>
+    </div>
+    <br/>
+    <button type="submit">Calculate</button>
+</form>
+
+<script>
+function toggleExponent() {
+    const op = document.getElementById("operation").value;
+    document.getElementById("expDiv").style.display = op === "pow" ? "block" : "none";
+}
+</script>
+</body>
+</html>
