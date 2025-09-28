@@ -8,9 +8,9 @@ pipeline {
     }
 
     stages {
-        stage('Run Tests') {
+        stage('Build and Test JAR') {
             steps {
-                sh 'mvn -B verify'
+                sh 'mvn -B clean verify package'
             }
         }
 
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                        sh "DOCKER_BUILDKIT=1 docker build -t ${env.DOCKER_IMAGE} ."
+                        sh "docker build -t ${env.DOCKER_IMAGE} ."
                         sh "docker push ${env.DOCKER_IMAGE}"
                     }
                 }
@@ -27,14 +27,16 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
+                script {
+                    sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo 'Pipeline completed successfully!'
             script {
                 withCredentials([usernamePassword(
                     credentialsId: 'pipeline-notify-email',
@@ -85,6 +87,7 @@ pipeline {
                     )
                 }
             }
+            echo 'Cleaning up workspace...'
             cleanWs()
         }
     }

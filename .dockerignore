@@ -1,3 +1,4 @@
+src/
 target/
 *.class
 
@@ -13,9 +14,8 @@ mvnw.cmd
 Jenkinsfile
 inventory.ini
 playbook.yml
+pom.xml
 .dockerignore
 Dockerfile
 README.md
 report.pdf
-
-!target/calculator-1.0.jar
