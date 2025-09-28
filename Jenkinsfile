@@ -4,7 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = "mohitiiitb/calculator-spe:latest"
         ANSIBLE_INVENTORY = "inventory.ini"
-        DEPLOY_PLAYBOOK = "deploy.yml"
+        DEPLOY_PLAYBOOK = "playbook.yml"
+        NOTIFY_EMAIL = credentials('pipeline-notify-email')
     }
 
     stages {
@@ -35,15 +36,43 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Cleaning up workspace...'
-            cleanWs()
-        }
         success {
             echo 'Pipeline completed successfully!'
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    <html>
+                    <body>
+                        <h2 style="color:green;">Pipeline Succeeded.</h2>
+                        <p><b>Job:</b> ${env.JOB_NAME}</p>
+                        <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+                        <p><b>URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    </body>
+                    </html>
+                    """,
+                mimeType: 'text/html',
+                to: "${env.NOTIFY_EMAIL}"
+            )
         }
         failure {
             echo 'Pipeline failed.'
+            emailext(
+                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    <html>
+                    <body>
+                        <h2 style="color:red;">Pipeline Failed.</h2>
+                        <p><b>Job:</b> ${env.JOB_NAME}</p>
+                        <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+                        <p><b>URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    </body>
+                    </html>
+                    """,
+                mimeType: 'text/html',
+                to: "${env.NOTIFY_EMAIL}"
+            )
+            echo 'Cleaning up workspace...'
+            cleanWs()
         }
     }
 }
