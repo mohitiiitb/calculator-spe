@@ -8,9 +8,9 @@ pipeline {
     }
 
     stages {
-        stage('Build and Test JAR') {
+        stage('Run Tests') {
             steps {
-                sh 'mvn -B clean verify package'
+                sh 'mvn -B verify'
             }
         }
 
@@ -27,16 +27,14 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                script {
-                    sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
-                }
+                sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'Pipeline completed successfully.'
             script {
                 withCredentials([usernamePassword(
                     credentialsId: 'pipeline-notify-email',
@@ -87,7 +85,6 @@ pipeline {
                     )
                 }
             }
-            echo 'Cleaning up workspace...'
             cleanWs()
         }
     }
