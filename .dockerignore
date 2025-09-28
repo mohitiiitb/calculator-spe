@@ -1,28 +1,17 @@
 src/
 target/
-build/
-out/
-*.war
 *.class
 
 .mvn/
 .mvnw
 mvnw.cmd
-
 .git/
 .gitignore
 .gitattributes
-
-*.iml
-.idea/
 .vscode/
-*.swp
-*.swo
-*.bak
 *.log
 
 Jenkinsfile
-ansible.cfg
 inventory.ini
 playbook.yml
 pom.xml
@@ -30,3 +19,5 @@ pom.xml
 Dockerfile
 README.md
 report.pdf
+
+!target/calculator-1.0.jar
