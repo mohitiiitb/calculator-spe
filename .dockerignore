@@ -19,3 +19,5 @@ pom.xml
 Dockerfile
 README.md
 report.pdf
+
+!target/calculator-1.0.jar
