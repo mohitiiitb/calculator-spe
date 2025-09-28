@@ -13,7 +13,6 @@ mvnw.cmd
 Jenkinsfile
 inventory.ini
 playbook.yml
-pom.xml
 .dockerignore
 Dockerfile
 README.md
