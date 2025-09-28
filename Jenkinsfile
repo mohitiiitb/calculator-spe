@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                        sh "docker build -t ${env.DOCKER_IMAGE} ."
+                        sh "DOCKER_BUILDKIT=1 docker build -t ${env.DOCKER_IMAGE} ."
                         sh "docker push ${env.DOCKER_IMAGE}"
                     }
                 }
