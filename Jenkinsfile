@@ -87,11 +87,8 @@ pipeline {
             }
             echo 'Cleaning up workspace...'
             cleanWs()
-        }
 
-        always {
-            sh "docker container prune -f || true"
-            sh "docker image prune -af || true"
+
         }
     }
 }
