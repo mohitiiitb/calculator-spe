@@ -17,9 +17,9 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                        sh "docker build -t ${env.DOCKER_IMAGE} ."
-                        sh "docker push ${env.DOCKER_IMAGE}"
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
+                        def appImage = docker.build("${env.DOCKER_IMAGE}")
+                        appImage.push()
                     }
                 }
             }
@@ -27,9 +27,7 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                script {
-                    sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
-                }
+                sh "ansible-playbook -i ${env.ANSIBLE_INVENTORY} ${env.DEPLOY_PLAYBOOK}"
             }
         }
     }
@@ -90,7 +88,7 @@ pipeline {
             echo 'Cleaning up workspace...'
             cleanWs()
         }
-        
+
         always {
             sh "docker container prune -f || true"
             sh "docker image prune -af || true"
