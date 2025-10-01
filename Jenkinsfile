@@ -40,7 +40,8 @@ pipeline {
             script {
                 withCredentials([usernamePassword(
                     credentialsId: 'pipeline-notify-email',
-                    usernameVariable: 'EMAIL_USR'
+                    usernameVariable: 'EMAIL_USR',
+                    passwordVariable: 'EMAIL_PSW'
                 )]) {
                     emailext(
                         subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -66,7 +67,8 @@ pipeline {
             script {
                 withCredentials([usernamePassword(
                     credentialsId: 'pipeline-notify-email',
-                    usernameVariable: 'EMAIL_USR'
+                    usernameVariable: 'EMAIL_USR',
+                    passwordVariable: 'EMAIL_PSW'
                 )]) {
                     emailext(
                         subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -88,7 +90,7 @@ pipeline {
             echo 'Cleaning up workspace...'
             cleanWs()
         }
-
+        
         always {
             sh "docker container prune -f || true"
             sh "docker image prune -af || true"
