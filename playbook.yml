@@ -1,7 +1,25 @@
 ---
 - hosts: calculator_hosts
   tasks:
-  
+
+    - name: Stop existing container if running
+      community.docker.docker_container:
+        name: calculator_app
+        state: stopped
+      ignore_errors: true
+
+    - name: Remove existing container
+      community.docker.docker_container:
+        name: calculator_app
+        state: absent
+      ignore_errors: true
+
+    - name: Remove existing Docker image
+      community.docker.docker_image:
+        name: mohitiiitb/calculator-spe:latest
+        state: absent
+      ignore_errors: true
+
     - name: Pull the latest Docker image
       community.docker.docker_image:
         name: mohitiiitb/calculator-spe:latest
