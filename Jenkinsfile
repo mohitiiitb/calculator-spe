@@ -17,7 +17,7 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
+                    docker.withRegistry('', 'dockerhub-creds') {
                         def appImage = docker.build("${env.DOCKER_IMAGE}")
                         appImage.push()
                     }
@@ -87,8 +87,6 @@ pipeline {
             }
             echo 'Cleaning up workspace...'
             cleanWs()
-
-
         }
     }
 }
