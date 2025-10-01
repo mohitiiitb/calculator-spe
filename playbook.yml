@@ -2,18 +2,11 @@
 - hosts: calculator_hosts
   become: true
   tasks:
-
-    - name: Pull latest Docker image
+  
+    - name: Pull the latest Docker image
       community.docker.docker_image:
         name: mohitiiitb/calculator-spe:latest
         source: pull
-
-    - name: Remove old container if exists
-      community.docker.docker_container:
-        name: calculator_app
-        state: absent
-        force_kill: true
-      ignore_errors: true
 
     - name: Run Calculator container in detached mode
       community.docker.docker_container:
@@ -28,4 +21,4 @@
 
     - name: Print access URL
       debug:
-        msg: "Calculator is running! Open in your browser: http://localhost:8081"
+        msg: "Application running at http://localhost:8081"
