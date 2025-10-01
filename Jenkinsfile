@@ -39,7 +39,7 @@ pipeline {
             echo 'Pipeline completed successfully!'
             script {
                 withCredentials([usernamePassword(
-                    credentialsId: 'pipeline-notify-email',
+                    credentialsId: 'gmail-creds',
                     usernameVariable: 'EMAIL_USR',
                     passwordVariable: 'EMAIL_PSW'
                 )]) {
@@ -66,7 +66,7 @@ pipeline {
             echo 'Pipeline failed.'
             script {
                 withCredentials([usernamePassword(
-                    credentialsId: 'pipeline-notify-email',
+                    credentialsId: 'gmail-creds',
                     usernameVariable: 'EMAIL_USR',
                     passwordVariable: 'EMAIL_PSW'
                 )]) {
