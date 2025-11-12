@@ -7,5 +7,3 @@ docker run -d --name calculator_app -p 8081:8081 --tty --rm mohitiiitb/calculato
 ```
 
 Application will then be accessible on http://localhost:8081
-
-demo
